@@ -3,7 +3,6 @@ import { taskReducer } from "./reducer";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import ThemeToggle from "./components/ThemeToggle";
-
 import { ThemeContext, ThemeProvider } from "./context/ThemeContext";
 import "./styles.css";
 
@@ -16,30 +15,49 @@ function App() {
   });
 
   const [filter, setFilter] = useState("all");
-  const isInitialRender = useRef(true); // ✅ Track initial render
+  const isInitialRender = useRef(true);
 
-  
+  // ✅ Save tasks to localStorage & show alert only when tasks update
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 
-    
     if (isInitialRender.current) {
-      isInitialRender.current = false; 
+      isInitialRender.current = false;
     } else {
       alert("Task list updated!");
     }
-  }, [tasks]); 
+  }, [tasks]);
+
   return (
     <div className={darkMode ? "dark-mode" : ""}>
       <div className="container">
         <h1>Task Manager</h1>
-        <ThemeToggle /> 
+        <ThemeToggle />
+
         <TaskForm dispatch={dispatch} />
-        <div>
-          <button onClick={() => setFilter("all")}>All</button>
-          <button onClick={() => setFilter("completed")}>Completed</button>
-          <button onClick={() => setFilter("pending")}>Pending</button>
+
+        {/* ✅ Filter Buttons with Active Class */}
+        <div className="filter-buttons">
+          <button
+            className={filter === "all" ? "active-filter" : ""}
+            onClick={() => setFilter("all")}
+          >
+            All
+          </button>
+          <button
+            className={filter === "completed" ? "active-filter" : ""}
+            onClick={() => setFilter("completed")}
+          >
+            Completed
+          </button>
+          <button
+            className={filter === "pending" ? "active-filter" : ""}
+            onClick={() => setFilter("pending")}
+          >
+            Pending
+          </button>
         </div>
+
         <TaskList tasks={tasks} dispatch={dispatch} filter={filter} />
       </div>
     </div>
